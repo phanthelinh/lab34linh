@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <head>
+            <%- include('../partials/head'); %>
+        </head>
+        <body>
+            <div class="container">
+                <h4>Danh sách sản phẩm</h4>
+                <input id="btnAddProduct" type="button" value="Thêm sản phẩm" class="btn btn-success" />
+                <p>Chọn một sản phẩm để xem chi tiết</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <th>STT</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Thao tác</th>
+                    </thead>
+                    <tbody>
+                        <%products && products.forEach((item, idx) => { %>
+                            <tr>
+                                <td><%=(idx + 1)%></td>
+                                <td><%=item.name%></td>
+                                <td><%=item.price%></td>
+                                <td>
+                                    <a href="#">Chỉnh sửa</a> |
+                                    <a href="#">Xoá</a>
+                                </td>
+                            </tr>
+                        <%});%>
+                    </tbody>
+                </table>
+            </div>
+        </body>
+    </head>
+</html>
