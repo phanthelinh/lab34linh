@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../../partials/head') %>
+        <title>Lab 5 - Users</title>
+        <style>
+            .loader {
+              border: 16px solid #f3f3f3;
+              border-radius: 50%;
+              border-top: 16px solid #3498db;
+              width: 120px;
+              height: 120px;
+              -webkit-animation: spin 2s linear infinite; /* Safari */
+              animation: spin 2s linear infinite;
+            }
+            
+            /* Safari */
+            @-webkit-keyframes spin {
+              0% { -webkit-transform: rotate(0deg); }
+              100% { -webkit-transform: rotate(360deg); }
+            }
+            
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            </style>
+    </head>
+    <body>
+        <div class="container">
+            <h4 class="my-5 text-primary text-center text-uppercase">Danh sách người dùng</h4>
+            <a class="btn btn-success btn-sm my-4" href="/users/add">Thêm người dùng</a>
+            <p>Chọn một người dùng để xem chi tiết</p>
+            <table class="table table-striped border">
+                <thead>
+                    <th>STT</th>
+                    <th>Họ và tên</th>
+                    <th>Giới tính</th>
+                    <th>Tuổi</th>
+                    <th>Email</th>
+                    <th>Thao tác</th>
+                </thead>
+                <tbody>
+                    <% users && users.forEach((user, idx) => {%>
+                        <tr>
+                            <td><%= (idx + 1)%></td>
+                            <td><a href="/users?id=<%=user.id%>"><%= user.name%></a></td>
+                            <td><%= (user.gender === 'male') ? 'Nam' : 'Nữ' %></td>
+                            <td><%= user.age%></td>
+                            <td><%= user.email%></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary">Chỉnh sửa</button>
+                                <button class="btn btn-sm btn-outline-danger" data-id="<%= user.id%>" data-username="<%= user.name%>" data-toggle="modal" data-target="#deleteConfirm">Xóa</button>
+                            </td>
+                        </tr>
+                    <% })%>
+                </tbody>
+            </table>
+            <%- include('../../partials/deleteConfirmPopup')%>
+        </div>
+        <script>
+            $('#deleteConfirm').on('show.bs.modal', e => {
+                //get data-username
+                let name = $(e.relatedTarget).data('username');
+                let id = $(e.relatedTarget).data('id');
+                //populate the modal
+                $(e.currentTarget).find('#username').text(name);
+                $(e.currentTarget).find('#dataId').text(id);
+            });
+
+            $('#btnYes').on('click', e => {
+                //show loder
+                $('#loading').removeAttr('hidden');
+                $.ajax({
+                    url: '/users/delete',
+                    method: 'post',
+                    data: {
+                        id: $('#dataId').text()
+                    },
+                    success: function (data) {
+                        $('#loading').hide();
+                        if (data.code === 0) {
+                            $('#deleteConfirm').modal('hide');
+                        } else {
+                            $('#modal-error-message').removeAttr('hidden');
+                            $('#modal-error-message').text(data.message);
+                        }
+                    },
+                    error: function (e) {
+                        $('#loading').hide();
+                        $('#modal-error-message').removeAttr('hidden');
+                        $('#modal-error-message').text('Có lỗi xảy ra');
+                    }
+                });
+            })
+        </script>
+    </body>
+</html>

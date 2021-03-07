@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const app = express();
 require('dotenv').config();
 
+const usersAPI = require('./src/usersAPI');
+
 app.use(session({
     secret: process.env.SESSION_SECRET || '', 
     saveUninitialized: false,
@@ -29,7 +31,7 @@ const redirectLogin = (req, res, next) => {
 
 const redirectHome = (req, res, next) => {
     if (req.session.useremail) {
-        res.redirect('/home');
+        res.redirect('/login');
     } else {
         next();
     }
@@ -55,6 +57,46 @@ app.post('/login', redirectHome, (req,res) => {
     }
 });
 
+app.get('/users', async (req,res) => {
+    let queryId = req.query.id;
+    if (queryId !== undefined) {
+        let user = await usersAPI.getUserById(queryId);
+        res.render('pages/users/profile', {user: user.data});
+    } else {
+        let users = await usersAPI.getUsers();
+        res.render('pages/users/index', {users: users});
+    }
+});
+
+app.get('/users/add', async (req,res) => {
+    res.render('pages/users/add');
+});
+
+app.post('/users/add', async (req, res) => {
+    let userModel = req.body;
+    userModel.age = parseInt(userModel.age);
+    
+    let result = await usersAPI.addUser(userModel);
+    if (result.data !== undefined) {
+        res.redirect('/users');
+    } 
+    else {
+        res.render('pages/users/add', {message: result.message});
+    }
+});
+
+app.post('/users/delete', async (req, res) => {
+    let deleteObj = req.body;
+    let result = await usersAPI.deleteUser(deleteObj);
+    res.contentType('application/json');
+    res.json(result);
+});
+
+
+app.get('*', (req, res) => {
+    console.log(req.baseUrl);
+    res.render('pages/error', {page: req.url});
+})
 
 app.listen(8080, () => {
     console.log('app listen on port 8080');

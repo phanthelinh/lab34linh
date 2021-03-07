@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../../partials/head') %>
+        <title>Lab 5 - Users</title>
+        <style>
+            .row div {
+                margin-top: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 col-md-5 col-lg-4">
+                    <div class="card" class="w-100">
+                        <img class="card-img-top" src="https://www.w3schools.com/bootstrap4/img_avatar1.png"
+                            alt="Card image">
+                        <div class="card-body">
+                            <h4 class="card-title text-primary"><%=user.name%></h4>
+                            <p class="card-text">Giới tính: <strong><%= (user.gender === 'male') ? 'Nam' : 'Nữ' %></strong></p>
+                            <p class="card-text">Tuổi: <strong><%= user.age%></strong></p>
+                            <p class="card-text">Email: <strong><%= user.email%></strong></p>
+                            <a href="#" class="btn btn-primary">Liên hệ</a>
+                        </div>
+                    </div>
+                    <p class="mt-3"><a href="/users" >Quay lại</a></p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
