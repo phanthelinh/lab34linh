@@ -85,6 +85,36 @@ app.post('/users/add', async (req, res) => {
     }
 });
 
+app.get('/users/update', async (req, res) => {
+    let id = req.query.id || '';
+    if (id !== '') {
+        //get user
+        let user = await usersAPI.getUserById(id);
+        if (user.data !== undefined) {
+            res.render('pages/users/update', {user: user.data});
+        }
+    } 
+    else {
+        res.render('pages/error', {page: req.url});
+    }
+});
+
+app.post('/users/update', async (req,res) => {
+    let user = req.body;
+    if (user) {
+        user.age = parseInt(user.age);
+        let result = await usersAPI.updateUser(user);
+        if (result.data !== undefined) {
+            res.redirect('/users');
+        } 
+        else {
+            res.render(`pages/users/update?id=${user.id}`, {user: user, message: result.message});
+        }
+    } else {
+        res.render('pages/error', {page: req.url});
+    }
+});
+
 app.post('/users/delete', async (req, res) => {
     let deleteObj = req.body;
     let result = await usersAPI.deleteUser(deleteObj);
@@ -94,7 +124,6 @@ app.post('/users/delete', async (req, res) => {
 
 
 app.get('*', (req, res) => {
-    console.log(req.baseUrl);
     res.render('pages/error', {page: req.url});
 })
 

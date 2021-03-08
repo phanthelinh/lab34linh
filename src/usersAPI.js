@@ -29,6 +29,18 @@ option = (path, method = 'GET', bodyLength = 0) => {
             method: method,
         }
     }
+    else if (method === 'PUT' || method === 'put') {
+        return {
+            hostname: 'web-nang-cao.herokuapp.com',
+            path: path,
+            port: 443,
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': bodyLength
+            }
+        }
+    }
     else {
         return undefined;
     }
@@ -54,7 +66,7 @@ resolvePromise = (path, method = 'GET', body = '') => {
         request.on('error', (e) => {
             reject(e.message);
         });
-        if (method === 'POST' || method === 'post') {
+        if (method === 'POST' || method === 'post' || method === 'PUT' || method === 'put') {
             request.write(JSON.stringify(body));
         }
         request.end();
@@ -68,3 +80,5 @@ exports.getUserById = id => resolvePromise(`/lab5/users/${id}`);
 exports.addUser = user => resolvePromise('/lab5/users', 'post', user);
 
 exports.deleteUser = idObj => resolvePromise(`/lab5/users/${idObj.id}`, 'delete', idObj);
+
+exports.updateUser = user => resolvePromise('/lab5/users', 'put', user);
